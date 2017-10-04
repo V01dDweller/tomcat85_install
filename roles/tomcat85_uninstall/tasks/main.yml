@@ -16,7 +16,7 @@
     path: '/etc/systemd/system/tomcat.service'
     state: absent
   notify:
-  - systemd_reload
+  - Reload systemd
 
 - name: Delete Apache from /opt
   file:

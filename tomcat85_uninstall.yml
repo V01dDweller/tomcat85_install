@@ -7,6 +7,6 @@
   - tomcat85_uninstall
 
   handlers:
-  - name: systemd_reload
+  - name: Reload systemd
     systemd:
       daemon_reload: yes

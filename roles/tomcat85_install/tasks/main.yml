@@ -60,9 +60,9 @@
     dest: '/etc/systemd/system/tomcat.service'
     mode: 0644
   notify:
-  - systemd_reload
-  - enable_tomcat
-  - start_tomcat
+  - Reload systemd
+  - Enable tomcat service at boot
+  - Start tomcat service
 
 #- name: Clean-up the apache-tomcat tar fle
 #  file:

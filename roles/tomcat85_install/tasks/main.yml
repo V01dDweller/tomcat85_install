@@ -54,7 +54,7 @@
     name: tomcat
     home: '/opt/apache-tomcat'
 
-- name: Create the Tomcat systemd service file
+- name: Create the Tomcat systemd unit file
   copy:
     src: tomcat.service
     dest: '/etc/systemd/system/tomcat.service'

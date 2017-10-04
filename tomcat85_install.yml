@@ -6,7 +6,7 @@
   hosts: all
   become: True
   roles:
-  - jdk8_install
+  - install_oracle_jdk
   - tomcat85_install
   handlers:
   - name: systemd_reload

@@ -11,7 +11,7 @@ ansible-playbook -i myhosts.ini [-e 'proxy=proxy.domain.com:8080'] tomcat85_inst
 ```
 
 ```
-Files:
+tomcat85_install
 ├── README.md
 ├── roles
 │   ├── tomcat85_install
@@ -25,4 +25,3 @@ Files:
 ├── tomcat85_install.yml
 └── tomcat85_uninstall.yml
 ```
-

@@ -1,0 +1,33 @@
+# file: roles/tomcat85_uninstall/tasks/main.yml
+---
+- name: Stop the tomcat service
+  service:
+    name: tomcat
+    state: stopped
+  ignore_errors: True
+
+- name: Disable the tomcat service
+  service:
+    name: tomcat
+    enabled: no
+
+- name: Delete the tomcat.service unit file
+  file:
+    path: '/etc/systemd/system/tomcat.service'
+    state: absent
+  notify:
+  - systemd_reload
+
+- name: Delete Apache from /opt
+  file:
+    path: '{{item}}'
+    state: absent
+  with_items:
+  - '/opt/apache-tomcat'
+  - '/opt/apache-tomcat-8.5.23'
+
+- name: Remove tomcat user
+  user:
+    name: tomcat
+    state: absent
+    remove: yes

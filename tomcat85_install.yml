@@ -1,0 +1,25 @@
+# file: tomcat85_install.yml
+# variables: proxy
+# usage: ansible-playbook -i hosts_file.ini [-l <tag>] [-e proxy='proxy:port'] tomcat85_install.yml
+---
+- name: Installing Tomcat 8.5.23
+  hosts: all
+  become: True
+  roles:
+  - jdk8_install
+  - tomcat85_install
+  handlers:
+  - name: systemd_reload
+    systemd:
+      daemon_reload: yes
+
+  - name: enable_tomcat
+    systemd:
+      name: tomcat
+      enabled: yes
+
+  - name: start_tomcat
+    service:
+      name: tomcat
+      state: started
+   

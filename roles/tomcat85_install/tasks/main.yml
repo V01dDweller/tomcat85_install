@@ -1,0 +1,70 @@
+# file: roles/tomcat85_install/tasks/main.yml
+---
+- name: Create a tomcat group
+  group:
+    name: tomcat
+    state: present
+    gid: 91
+
+- name: Create a tomcat user
+  user:
+    name: tomcat
+    comment: "Apache Tomcat"
+    group: tomcat
+    state: present
+    shell: '/sbin/nologin'
+    createhome: no
+    uid: 91
+
+- name: Download Tomcat 8.5.23 to /tmp
+  get_url:
+    url: 'http://download.nextag.com/apache/tomcat/tomcat-8/v8.5.23/bin/apache-tomcat-8.5.23.tar.gz'
+    dest: '/tmp'
+    checksum: sha1:1ba27c1bb86ab9c8404e98068800f90bd662523c
+  environment:
+    http_proxy: "http://{{ proxy }}"
+    https_proxy: "http://{{ proxy }}"
+  retries: 3
+  delay: 3
+   
+- name: Unarchive Tomcat 8.5.23 to /opt
+  unarchive:
+    remote_src: yes
+    src: '/tmp/apache-tomcat-8.5.23.tar.gz'
+    dest: '/opt'
+    owner: tomcat
+    group: tomcat
+    mode: 0755
+    creates: '/opt/apache-tomcat-8.5.23'
+
+- name: Change ownership of /opt/apache-tomcat target since the unarchive module fails at this
+  file:
+    path: '/opt/apache-tomcat-8.5.23'
+    owner: tomcat
+    group: tomcat
+
+- name: Create a symlink for /opt/apache-tomcat to /opt/apache-tomcat-8.5.23
+  file:
+    src: '/opt/apache-tomcat-8.5.23'
+    dest: '/opt/apache-tomcat'
+    state: link
+
+- name: Set the tomcat home directory to /opt/apache-tomcat
+  user:
+    name: tomcat
+    home: '/opt/apache-tomcat'
+
+- name: Create the Tomcat systemd service file
+  copy:
+    src: tomcat.service
+    dest: '/etc/systemd/system/tomcat.service'
+    mode: 0644
+  notify:
+  - systemd_reload
+  - enable_tomcat
+  - start_tomcat
+
+#- name: Clean-up the apache-tomcat tar fle
+#  file:
+#    path: '/tmp/apache-tomcat-8.5.23.tar.gz'
+#    state: absent

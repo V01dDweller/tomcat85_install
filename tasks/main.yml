@@ -1,70 +1,66 @@
 # file: roles/tomcat85_install/tasks/main.yml
 ---
-- name: Create a tomcat group
+- name: Creating a tomcat group
   group:
-    name: tomcat
+    name: {{ tomcat_group }}
     state: present
     gid: 91
 
-- name: Create a tomcat user
+- name: Creating a tomcat user
   user:
-    name: tomcat
+    name: {{ tomcat_user }}
     comment: "Apache Tomcat"
-    group: tomcat
+    group: {{ tomcat_group }}
     state: present
     shell: '/sbin/nologin'
     createhome: no
     uid: 91
 
-- name: Download Tomcat 8.5.23 to /tmp
+- name: Downloading Tomcat {{ tomcat_version }} to /tmp
   get_url:
-    url: 'http://download.nextag.com/apache/tomcat/tomcat-8/v8.5.23/bin/apache-tomcat-8.5.23.tar.gz'
+    url: 'https://archive.apache.org/dist/tomcat/tomcat-8/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz
     dest: '/tmp'
     checksum: sha1:1ba27c1bb86ab9c8404e98068800f90bd662523c
-  environment:
-    http_proxy: "http://{{ proxy }}"
-    https_proxy: "http://{{ proxy }}"
   retries: 3
   delay: 3
-   
-- name: Unarchive Tomcat 8.5.23 to /opt
+
+- name: Unarchiving Tomcat {{ tomcat_version }} to /opt
   unarchive:
     remote_src: yes
-    src: '/tmp/apache-tomcat-8.5.23.tar.gz'
+    src: '/tmp/apache-tomcat-{{ tomcat_version }}.tar.gz'
     dest: '/opt'
-    owner: tomcat
-    group: tomcat
+    owner: {{ tomcat_user }}
+    group: {{ tomcat_group }}
     mode: 0755
-    creates: '/opt/apache-tomcat-8.5.23'
+    creates: '/opt/apache-tomcat-{{ tomcat_version }}'
 
-- name: Change ownership of /opt/apache-tomcat target since the unarchive module fails at this
+- name: Changing ownership of /opt/apache-tomcat-{{ tomcat_version }}
   file:
-    path: '/opt/apache-tomcat-8.5.23'
-    owner: tomcat
-    group: tomcat
+    path: '/opt/apache-tomcat-{{ tomcat_version }}'
+    owner: {{ tomcat_user }}
+    group: {{ tomcat_group }}
 
-- name: Create a symlink for /opt/apache-tomcat to /opt/apache-tomcat-8.5.23
+- name: Create a symlink for {{ tomcat_dir}} to {{ tomcat_dir }}-{{ tomcat_version }}
   file:
-    src: '/opt/apache-tomcat-8.5.23'
-    dest: '/opt/apache-tomcat'
+    src: '/opt/apache-tomcat-{{ tomcat_version }}'
+    dest: '{{ tomcat_dir }}'
     state: link
 
-- name: Set the tomcat home directory to /opt/apache-tomcat
+- name: Setting the tomcat home directory to {{ tomcat_dir }}
   user:
     name: tomcat
-    home: '/opt/apache-tomcat'
+    home: '{{ tomcat_dir }}'
 
-- name: Create the Tomcat systemd unit file
-  copy:
-    src: tomcat.service
+- name: Creating the Tomcat systemd unit file
+  template:
+    src: tomcat.service.j2
     dest: '/etc/systemd/system/tomcat.service'
     mode: 0644
   notify:
-  - Reload systemd
-  - Enable tomcat service at boot
-  - Start tomcat service
+  - restart_tomcat
 
-#- name: Clean-up the apache-tomcat tar fle
-#  file:
-#    path: '/tmp/apache-tomcat-8.5.23.tar.gz'
-#    state: absent
+- name: Cleaning up the apache-tomcat tar fle
+  file:
+    path: '/tmp/apache-tomcat-{{ tomcat_version }}.tar.gz'
+    state: absent
+...

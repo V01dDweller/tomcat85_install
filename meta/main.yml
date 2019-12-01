@@ -11,7 +11,5 @@ galaxy_info:
     versions:
     - 7
 dependencies:
-  - src: https://github.com/V01dDweller/openjdk11_install.git
-    scm: git
-    version: master
+  - src: V01dDweller.openjdk11_install 
 ...

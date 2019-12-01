@@ -1,0 +1,19 @@
+{# file: templates/tomcat.service.j2 #}
+{# becomes: {{ /etc/systemd/system/tomcat.service #}}
+[Unit]
+Description=Apache Tomcat 8 Servlet Container
+After=syslog.target network.target
+ 
+[Service]
+User={{ tomcat_user }}
+Group={{ tomcat_group }}
+Type=forking
+Environment=CATALINA_PID={{ tomcat_dir }}/tomcat.pid
+Environment=CATALINA_HOME={{ tomcat_dir }}
+Environment=CATALINA_BASE={{ tomcat_dir }}
+ExecStart={{ tomcat_dir }}/bin/startup.sh
+ExecStop={{ tomcat_dir }}/bin/shutdown.sh
+Restart=on-failure
+ 
+[Install]
+WantedBy=multi-user.target

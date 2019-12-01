@@ -1,0 +1,17 @@
+# file: tomcat85_install/meta/main.yml
+---
+galaxy_info:
+  author: V01dDweller
+  description: Install Apache Tomcat 8.5.23
+  company: The Galaxy Project
+  license: AFL v3.0
+  min_ansible_version: 2.7
+  platforms:
+  - name: EL
+    versions:
+    - 7
+dependencies:
+  - src: https://github.com/V01dDweller/openjdk11_install.git
+    scm: git
+    version: master
+...

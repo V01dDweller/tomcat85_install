@@ -1,0 +1,9 @@
+# file: handlers/main.yml
+---
+- name: restart_tomcat
+  systemd:
+    name: tomcat
+    enabled: yes
+    state: started
+    daemon_reload: yes
+...

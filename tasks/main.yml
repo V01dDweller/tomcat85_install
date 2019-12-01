@@ -2,15 +2,15 @@
 ---
 - name: Creating a tomcat group
   group:
-    name: {{ tomcat_group }}
+    name: '{{ tomcat_group }}'
     state: present
     gid: 91
 
 - name: Creating a tomcat user
   user:
-    name: {{ tomcat_user }}
-    comment: "Apache Tomcat"
-    group: {{ tomcat_group }}
+    name: '{{ tomcat_user }}'
+    comment: 'Apache Tomcat'
+    group: '{{ tomcat_group }}'
     state: present
     shell: '/sbin/nologin'
     createhome: no
@@ -18,29 +18,30 @@
 
 - name: Downloading Tomcat {{ tomcat_version }} to /tmp
   get_url:
-    url: 'https://archive.apache.org/dist/tomcat/tomcat-8/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz
+    url: 'https://archive.apache.org/dist/tomcat/tomcat-8/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz'
     dest: '/tmp'
     checksum: sha1:1ba27c1bb86ab9c8404e98068800f90bd662523c
   retries: 3
   delay: 3
+  changed_when: false
 
 - name: Unarchiving Tomcat {{ tomcat_version }} to /opt
   unarchive:
     remote_src: yes
     src: '/tmp/apache-tomcat-{{ tomcat_version }}.tar.gz'
     dest: '/opt'
-    owner: {{ tomcat_user }}
-    group: {{ tomcat_group }}
+    owner: '{{ tomcat_user }}'
+    group: '{{ tomcat_group }}'
     mode: 0755
     creates: '/opt/apache-tomcat-{{ tomcat_version }}'
 
 - name: Changing ownership of /opt/apache-tomcat-{{ tomcat_version }}
   file:
     path: '/opt/apache-tomcat-{{ tomcat_version }}'
-    owner: {{ tomcat_user }}
-    group: {{ tomcat_group }}
+    owner: '{{ tomcat_user }}'
+    group: '{{ tomcat_group }}'
 
-- name: Create a symlink for {{ tomcat_dir}} to {{ tomcat_dir }}-{{ tomcat_version }}
+- name: Create a symlink for {{ tomcat_dir }} to {{ tomcat_dir }}-{{ tomcat_version }}
   file:
     src: '/opt/apache-tomcat-{{ tomcat_version }}'
     dest: '{{ tomcat_dir }}'
@@ -48,7 +49,7 @@
 
 - name: Setting the tomcat home directory to {{ tomcat_dir }}
   user:
-    name: tomcat
+    name: '{{ tomcat_user }}'
     home: '{{ tomcat_dir }}'
 
 - name: Creating the Tomcat systemd unit file
@@ -63,4 +64,5 @@
   file:
     path: '/tmp/apache-tomcat-{{ tomcat_version }}.tar.gz'
     state: absent
+  changed_when: false
 ...

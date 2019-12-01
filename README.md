@@ -1,27 +1,52 @@
-# Tomcat 8.5.23 Binary Install #
+tomcat85\_install
+=================
 
-This an ansible playbook and role that downloads the Tomcat 8.5.23 tar.gz file from Apache then installs it as a systemd service on CentOS7/RHEL7. It uses the [oracle_jdk8_install](https://github.com/V01dDweller/oracle_jdk8_install) role which can be skippped if OpenJDK 8 or Oracle JDK 8 is already installed. An uninstall playbook/role is also included.
+Installs Tomcat 8.5.23 from binary tar ball on EL 7 Linux.
 
-Tested successfully on CentOS 7 with ansible 2.4.
+Requirements
+------------
 
-Usage:
+Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
 
+Role Variables
+--------------
+
+See role defaults.
+
+```yaml
+# file: defaults/main.yml
+---
+tomcat_user: tomcat
+tomcat_group: tomcat
+tomcat_dir: '/opt/apache-tomcat'
+tomcat_version: 8.5.23
+...
 ```
-ansible-playbook -i myhosts.ini [-e 'proxy=proxy.domain.com:8080'] tomcat85_install.yml
+
+Dependencies
+------------
+
+Requires JDK with JAVA\_HOME set. 
+
+Example Playbook
+----------------
+
+```yaml
+---
+- name: Install Tomcat 8.5
+  hosts: all
+  become: yes
+  roles:
+    - V01dDweller.tomcat85_install
+...
 ```
 
-```
-tomcat85_install
-├── README.md
-├── roles
-│   ├── tomcat85_install
-│   │   ├── files
-│   │   │   └── tomcat.service
-│   │   └── tasks
-│   │       └── main.yml
-│   └── tomcat85_uninstall
-│       └── tasks
-│           └── main.yml
-├── tomcat85_install.yml
-└── tomcat85_uninstall.yml
-```
+License
+-------
+
+BSD
+
+Author Information
+------------------
+
+By V01dDweller, 2019.

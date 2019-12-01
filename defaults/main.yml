@@ -1,7 +1,7 @@
 # file: defaults/main.yml
 ---
+tomcat_version: 8.5.23
 tomcat_user: tomcat
 tomcat_group: tomcat
 tomcat_dir: '/opt/apache-tomcat'
-tomcat_version: 8.5.23
 ...
